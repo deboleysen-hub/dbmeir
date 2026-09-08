@@ -431,9 +431,13 @@
                 if (isMig) {
                     const oldIdx = parseInt(document.getElementById("oldProductSelect").value) || 0;
                     const oldProd = PRODUCTS.mobile[oldIdx];
-                    const addedValue = Math.max(0, newProd.value - oldProd.value);
+                    
+                    // Berekent uitsluitend het POSITIEVE verschil. Downgrades leveren 0 euro op.
+                    const difference = newProd.value - oldProd.value;
+                    const addedValue = difference > 0 ? difference : 0;
                     
                     salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + addedValue;
+                    // Mobiel-teller blijft ongewijzigd op 0 bij een migratie
                 } else {
                     salesData[seller].mobile = (parseInt(salesData[seller].mobile) || 0) + 1;
                     salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + newProd.value;
