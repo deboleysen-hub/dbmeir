@@ -380,9 +380,10 @@
             if (cat === "mobile" || cat === "internet" || cat === "loose_value") {
                 pGroup.classList.remove("hidden");
                 pSelect.innerHTML = "";
-                PRODUCTS[cat].forEach((p, idx) => {
+                PRODUCTS[cat].forEach((p) => {
                     let opt = document.createElement("option");
-                    opt.value = idx;
+                    // We bewaren de ECHTE prijs rechtstreeks in het value-attribuut
+                    opt.value = p.value;
                     opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
                     pSelect.appendChild(opt);
                 });
@@ -399,9 +400,10 @@
         function populateOldProductDropdown(category) {
             const oldSelect = document.getElementById("oldProductSelect");
             oldSelect.innerHTML = "";
-            PRODUCTS[category].forEach((p, idx) => {
+            PRODUCTS[category].forEach((p) => {
                 let opt = document.createElement("option");
-                opt.value = idx;
+                // We bewaren de ECHTE prijs rechtstreeks in het value-attribuut
+                opt.value = p.value;
                 opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
                 oldSelect.appendChild(opt);
             });
@@ -424,35 +426,27 @@
             }
 
             if (cat === "mobile" || cat === "internet") {
-                const pIdx = parseInt(document.getElementById("productSelect").value, 10) || 0;
-                const newProd = PRODUCTS[cat][pIdx];
+                const newPrice = parseFloat(document.getElementById("productSelect").value) || 0;
                 const isMig = document.getElementById("isMigration").checked;
 
                 if (isMig) {
-                    const oldIdx = parseInt(document.getElementById("oldProductSelect").value, 10) || 0;
-                    const oldProd = PRODUCTS[cat][oldIdx];
+                    const oldPrice = parseFloat(document.getElementById("oldProductSelect").value) || 0;
                     
-                    const newPrice = Number(newProd.value) || 0;
-                    const oldPrice = Number(oldProd.value) || 0;
-                    
-                    // Alleen het positieve verschil optellen bij Value
+                    // Directe wiskundige berekening: Nieuw - Oud
                     const diff = newPrice - oldPrice;
                     const addedValue = diff > 0 ? diff : 0;
                     
                     salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + addedValue;
                 } else {
-                    const price = Number(newProd.value) || 0;
                     if (cat === "mobile") {
                         salesData[seller].mobile = (parseInt(salesData[seller].mobile, 10) || 0) + 1;
                     } else {
                         salesData[seller].internet = (parseInt(salesData[seller].internet, 10) || 0) + 1;
                     }
-                    salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + price;
+                    salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + newPrice;
                 }
             } else if (cat === "loose_value") {
-                const pIdx = parseInt(document.getElementById("productSelect").value, 10) || 0;
-                const prod = PRODUCTS.loose_value[pIdx];
-                const price = Number(prod.value) || 0;
+                const price = parseFloat(document.getElementById("productSelect").value) || 0;
                 salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + price;
             } else if (cat === "hardware") {
                 const gsm = parseInt(document.getElementById("gsmCount").value, 10) || 0;
