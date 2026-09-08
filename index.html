@@ -63,7 +63,7 @@
 <body>
 
     <header>
-        <h1>DB Meir Dashboard</h1>
+        <h1>DB Meir Dashboard (Live)</h1>
         <button class="btn" type="button" onclick="openManagerModal()">⚙️ Beheer</button>
     </header>
 
@@ -203,7 +203,24 @@
         </div>
     </div>
 
-    <script>
+    <!-- Firebase SDK's -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDGBtVV_vtb7NdXx-Mx5qQaAv8tYxq27wM",
+            authDomain: "dbmeir-sales.firebaseapp.com",
+            databaseURL: "https://dbmeir-sales-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "dbmeir-sales",
+            storageBucket: "dbmeir-sales.appspot.com",
+            messagingSenderId: "565355608514",
+            appId: "1:565355608514:web:e399580b0cf7aa45c75bf7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         const MANAGER_PIN = "1234";
         const WORK_DAYS_IN_MONTH = 22;
 
@@ -250,7 +267,7 @@
             80:  { internet: 12, mobile: 26, value: 1546, gsm: 10, acc: 6 }
         };
 
-        let team = [
+        let defaultTeam = [
             { id: 1, name: "Tom", regime: 100 },
             { id: 2, name: "Mohit", regime: 100 },
             { id: 3, name: "Sebastian", regime: 100 },
@@ -265,35 +282,40 @@
             { id: 12, name: "Erkhem", regime: 100 }
         ];
 
+        let team = [...defaultTeam];
         let salesData = {};
 
-        function loadSavedData() {
-            try {
-                const savedSales = localStorage.getItem("dbmeir_sales_v3");
-                if (savedSales) salesData = JSON.parse(savedSales);
-            } catch (e) { console.error(e); }
-            team.forEach(m => {
-                if (!salesData[m.name]) {
-                    salesData[m.name] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
-                }
+        // Realtime luisteren naar Firebase
+        onValue(ref(db, 'dbmeir_data'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                if (data.team) team = data.team;
+                if (data.sales) salesData = data.sales;
+            } else {
+                // Eerste keer vullen als database leeg is
+                syncToCloud();
+            }
+            populateSellerDropdown();
+            updateDashboard();
+            if(!document.getElementById("managerControls").classList.contains("hidden")) {
+                renderTeamManagerList();
+            }
+        });
+
+        function syncToCloud() {
+            set(ref(db, 'dbmeir_data'), {
+                team: team,
+                sales: salesData
             });
         }
 
-        function saveData() {
-            try {
-                localStorage.setItem("dbmeir_sales_v3", JSON.stringify(salesData));
-            } catch (e) { console.error(e); }
-        }
-
-        function initData() {
-            loadSavedData();
-            populateSellerDropdown();
+        window.initData = function() {
             onCategoryChange();
-            updateDashboard();
         }
 
-        function populateSellerDropdown() {
+        window.populateSellerDropdown = function() {
             const select = document.getElementById("sellerSelect");
+            if (!select) return;
             select.innerHTML = "";
             team.forEach(m => {
                 let opt = document.createElement("option");
@@ -303,7 +325,7 @@
             });
         }
 
-        function onCategoryChange() {
+        window.onCategoryChange = function() {
             const cat = document.getElementById("categorySelect").value;
             const pGroup = document.getElementById("productGroup");
             const pSelect = document.getElementById("productSelect");
@@ -320,7 +342,7 @@
                 pSelect.innerHTML = "";
                 PRODUCTS[cat].forEach((p) => {
                     let opt = document.createElement("option");
-                    opt.value = p.value; // Direct de prijs als getal
+                    opt.value = p.value;
                     opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
                     pSelect.appendChild(opt);
                 });
@@ -339,20 +361,20 @@
             oldSelect.innerHTML = "";
             PRODUCTS[category].forEach((p) => {
                 let opt = document.createElement("option");
-                opt.value = p.value; // Direct de prijs als getal
+                opt.value = p.value;
                 opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
                 oldSelect.appendChild(opt);
             });
         }
 
-        function toggleMigrationInput() {
+        window.toggleMigrationInput = function() {
             const isMig = document.getElementById("isMigration").checked;
             const oGroup = document.getElementById("oldProductGroup");
             if (isMig) oGroup.classList.remove("hidden");
             else oGroup.classList.add("hidden");
         }
 
-        function submitSale() {
+        window.submitSale = function() {
             const seller = document.getElementById("sellerSelect").value;
             const cat = document.getElementById("categorySelect").value;
             if (!seller) return alert("Selecteer een verkoper!");
@@ -367,10 +389,8 @@
 
                 if (isMig) {
                     const oldPrice = parseFloat(document.getElementById("oldProductSelect").value) || 0;
-                    
-                    // SIMPLICITEIT: Alleen de simpele som (Nieuw - Oud)
                     const diff = newPrice - oldPrice;
-                    const addedValue = diff > 0 ? diff : 0; // Als het negatief is, telt hij 0 op
+                    const addedValue = diff > 0 ? diff : 0;
 
                     salesData[seller].value += addedValue;
                     alert(`Upgrade berekend voor ${seller}!\nNieuw (€${newPrice.toFixed(2)}) - Oud (€${oldPrice.toFixed(2)}) = +€${addedValue.toFixed(2)} toegevoegd aan Value.`);
@@ -393,8 +413,7 @@
                 alert(`Hardware opgeslagen voor ${seller}!`);
             }
 
-            saveData();
-            updateDashboard();
+            syncToCloud();
 
             document.getElementById("isMigration").checked = false;
             toggleMigrationInput();
@@ -407,6 +426,7 @@
             let targetInt = 0, targetMob = 0, targetVal = 0, targetGsm = 0, targetAcc = 0;
 
             const tbody = document.getElementById("teamTableBody");
+            if (!tbody) return;
             tbody.innerHTML = "";
 
             team.forEach(m => {
@@ -424,7 +444,7 @@
                 totalGsm += curGsm;
                 totalAcc += curAcc;
 
-                const t = MONTHLY_TARGETS[m.regime];
+                const t = MONTHLY_TARGETS[m.regime] || MONTHLY_TARGETS[100];
                 targetInt += t.internet / WORK_DAYS_IN_MONTH;
                 targetMob += t.mobile / WORK_DAYS_IN_MONTH;
                 targetVal += t.value / WORK_DAYS_IN_MONTH;
@@ -466,6 +486,7 @@
 
         function updateKpiColor(boxId, current, target) {
             const box = document.getElementById(boxId);
+            if (!box) return;
             box.classList.remove("status-red", "status-yellow", "status-green");
             const pct = target > 0 ? (current / target) : 1;
             if (pct >= 1.0) box.classList.add("status-green");
@@ -473,18 +494,18 @@
             else box.classList.add("status-red");
         }
 
-        function openManagerModal() {
+        window.openManagerModal = function() {
             document.getElementById("managerModal").classList.remove("hidden");
             document.getElementById("pinSection").classList.remove("hidden");
             document.getElementById("managerControls").classList.add("hidden");
             document.getElementById("managerPinInput").value = "";
         }
 
-        function closeManagerModal() {
+        window.closeManagerModal = function() {
             document.getElementById("managerModal").classList.add("hidden");
         }
 
-        function verifyPin() {
+        window.verifyPin = function() {
             if (document.getElementById("managerPinInput").value === MANAGER_PIN) {
                 document.getElementById("pinSection").classList.add("hidden");
                 document.getElementById("managerControls").classList.remove("hidden");
@@ -492,40 +513,37 @@
             } else { alert("Onjuiste PIN!"); }
         }
 
-        function resetDailyStats() {
+        window.resetDailyStats = function() {
             if (confirm("Weet je zeker dat je de dagstand wilt resetten naar 0?")) {
                 team.forEach(m => salesData[m.name] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 });
-                saveData();
-                updateDashboard();
+                syncToCloud();
                 alert("Dagstand gereset naar 0!");
             }
         }
 
-        function addTeamMember() {
+        window.addTeamMember = function() {
             const name = document.getElementById("newNameInput").value.trim();
             const regime = Number(document.getElementById("newRegimeInput").value);
             if (!name) return alert("Vul een naam in!");
 
             team.push({ id: Date.now(), name, regime });
             salesData[name] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
-            saveData();
+            syncToCloud();
             document.getElementById("newNameInput").value = "";
-            populateSellerDropdown();
             renderTeamManagerList();
-            updateDashboard();
         }
 
-        function removeTeamMember(id) {
+        window.removeTeamMember = function(id) {
             if (confirm("Teamlid verwijderen?")) {
                 team = team.filter(m => m.id !== id);
-                populateSellerDropdown();
+                syncToCloud();
                 renderTeamManagerList();
-                updateDashboard();
             }
         }
 
         function renderTeamManagerList() {
             const container = document.getElementById("teamMemberList");
+            if (!container) return;
             container.innerHTML = "";
             team.forEach(m => {
                 let div = document.createElement("div");
