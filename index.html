@@ -387,7 +387,6 @@
                     pSelect.appendChild(opt);
                 });
                 
-                // Migratieoptie inschakelen bij Mobiel EN Internet
                 if (cat === "mobile" || cat === "internet") {
                     mGroup.classList.remove("hidden");
                     populateOldProductDropdown(cat);
@@ -425,37 +424,41 @@
             }
 
             if (cat === "mobile" || cat === "internet") {
-                const pIdx = parseInt(document.getElementById("productSelect").value) || 0;
+                const pIdx = parseInt(document.getElementById("productSelect").value, 10) || 0;
                 const newProd = PRODUCTS[cat][pIdx];
                 const isMig = document.getElementById("isMigration").checked;
 
                 if (isMig) {
-                    const oldIdx = parseInt(document.getElementById("oldProductSelect").value) || 0;
+                    const oldIdx = parseInt(document.getElementById("oldProductSelect").value, 10) || 0;
                     const oldProd = PRODUCTS[cat][oldIdx];
                     
-                    // Alleen het POSITIEVE verschil toevoegen aan Value
-                    const difference = newProd.value - oldProd.value;
-                    const addedValue = difference > 0 ? difference : 0;
+                    const newPrice = Number(newProd.value) || 0;
+                    const oldPrice = Number(oldProd.value) || 0;
+                    
+                    // Alleen het positieve verschil optellen bij Value
+                    const diff = newPrice - oldPrice;
+                    const addedValue = diff > 0 ? diff : 0;
                     
                     salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + addedValue;
-                    // Mobiel/Internet tellers blijven ongewijzigd bij migraties
                 } else {
+                    const price = Number(newProd.value) || 0;
                     if (cat === "mobile") {
-                        salesData[seller].mobile = (parseInt(salesData[seller].mobile) || 0) + 1;
+                        salesData[seller].mobile = (parseInt(salesData[seller].mobile, 10) || 0) + 1;
                     } else {
-                        salesData[seller].internet = (parseInt(salesData[seller].internet) || 0) + 1;
+                        salesData[seller].internet = (parseInt(salesData[seller].internet, 10) || 0) + 1;
                     }
-                    salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + newProd.value;
+                    salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + price;
                 }
             } else if (cat === "loose_value") {
-                const pIdx = parseInt(document.getElementById("productSelect").value) || 0;
+                const pIdx = parseInt(document.getElementById("productSelect").value, 10) || 0;
                 const prod = PRODUCTS.loose_value[pIdx];
-                salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + prod.value;
+                const price = Number(prod.value) || 0;
+                salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + price;
             } else if (cat === "hardware") {
-                const gsm = parseInt(document.getElementById("gsmCount").value) || 0;
-                const acc = parseInt(document.getElementById("accCount").value) || 0;
-                salesData[seller].gsm = (parseInt(salesData[seller].gsm) || 0) + gsm;
-                salesData[seller].acc = (parseInt(salesData[seller].acc) || 0) + acc;
+                const gsm = parseInt(document.getElementById("gsmCount").value, 10) || 0;
+                const acc = parseInt(document.getElementById("accCount").value, 10) || 0;
+                salesData[seller].gsm = (parseInt(salesData[seller].gsm, 10) || 0) + gsm;
+                salesData[seller].acc = (parseInt(salesData[seller].acc, 10) || 0) + acc;
             }
 
             saveData();
@@ -479,11 +482,11 @@
             team.forEach(m => {
                 const data = salesData[m.name] || { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
                 
-                const curInt = parseInt(data.internet) || 0;
-                const curMob = parseInt(data.mobile) || 0;
+                const curInt = parseInt(data.internet, 10) || 0;
+                const curMob = parseInt(data.mobile, 10) || 0;
                 const curVal = parseFloat(data.value) || 0;
-                const curGsm = parseInt(data.gsm) || 0;
-                const curAcc = parseInt(data.acc) || 0;
+                const curGsm = parseInt(data.gsm, 10) || 0;
+                const curAcc = parseInt(data.acc, 10) || 0;
 
                 totalInt += curInt;
                 totalMob += curMob;
@@ -570,7 +573,7 @@
 
         function addTeamMember() {
             const name = document.getElementById("newNameInput").value.trim();
-            const regime = parseInt(document.getElementById("newRegimeInput").value);
+            const regime = parseInt(document.getElementById("newRegimeInput").value, 10);
             if (!name) return alert("Vul een naam in!");
 
             team.push({ id: Date.now(), name, regime });
