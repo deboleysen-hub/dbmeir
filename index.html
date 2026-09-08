@@ -290,11 +290,13 @@
         onValue(ref(db, 'dbmeir_data'), (snapshot) => {
             const data = snapshot.val();
             if (data && data.team) {
-                // Zorg dat team altijd als nette array wordt gelezen
-                team = Array.isArray(data.team) ? data.team : Object.values(data.team);
+                let rawTeam = data.team;
+                team = Array.isArray(rawTeam) ? rawTeam.filter(Boolean) : Object.values(rawTeam).filter(Boolean);
+                if (team.length === 0) team = [...defaultTeam];
                 salesData = data.sales || {};
             } else {
                 team = [...defaultTeam];
+                salesData = {};
                 syncToCloud();
             }
             populateSellerDropdown();
