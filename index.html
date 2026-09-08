@@ -213,91 +213,35 @@
                 { name: "BASE Pro Start / PRO Start", value: 8.26 },
                 { name: "BASE Pro 11", value: 9.09 },
                 { name: "BASE 15", value: 12.40 },
-                { name: "BASE 15 Classic", value: 12.40 },
-                { name: "BASE 15 CLOSING DEAL", value: 12.40 },
-                { name: "BASE 15 Extra Promo", value: 12.40 },
-                { name: "BASE 15 WEBDEAL", value: 12.40 },
                 { name: "King", value: 12.40 },
-                { name: "Telenet Mobile Basic", value: 13.02 },
                 { name: "BASE 20", value: 16.53 },
-                { name: "BASE 20 CLOSING DEAL", value: 16.53 },
-                { name: "BASE 20 Extra Promo", value: 16.53 },
-                { name: "BASE 20 WEBDEAL", value: 16.53 },
-                { name: "BASE Pro 20", value: 16.53 },
                 { name: "BASE 25", value: 20.66 },
                 { name: "Kong", value: 20.14 },
                 { name: "BASE 29", value: 23.97 },
-                { name: "BASE 29 CLOSING DEAL", value: 23.97 },
-                { name: "BASE 29 Extra Promo", value: 23.97 },
-                { name: "BASE 29 Webdeal", value: 23.97 },
-                { name: "BASE Pro 29", value: 23.97 },
                 { name: "BASE 30", value: 24.79 },
-                { name: "TURK TLKM Relax 30", value: 24.79 },
-                { name: "Telenet Mobile Unlimited", value: 25.41 },
                 { name: "BASE 35", value: 28.93 },
-                { name: "BASE Pro 35", value: 28.92 },
                 { name: "BASE 39", value: 32.23 },
-                { name: "BASE 39 CLOSING DEAL", value: 32.23 },
-                { name: "BASE 39 Extra Promo", value: 32.23 },
-                { name: "BASE 39 WEBDEAL", value: 32.23 },
-                { name: "PRO Connect", value: 23.97 },
-                { name: "Telenet Mobile Unlimited Pro", value: 35.58 },
                 { name: "BASE 45", value: 37.19 },
-                { name: "BASE MAX 45", value: 37.19 },
-                { name: "BASE Pro Europe", value: 37.19 },
-                { name: "TURK TLKM Max 45", value: 37.19 },
-                { name: "BASE 59", value: 48.76 },
-                { name: "BASE Pro World", value: 49.58 }
+                { name: "BASE 59", value: 48.76 }
             ],
             internet: [
-                { name: "BASE Internet Limited", value: 22.31 },
                 { name: "Easy Internet", value: 25.21 },
                 { name: "Basic Internet", value: 32.22 },
                 { name: "BASE Internet Unlimited", value: 33.06 },
-                { name: "Internet Basic", value: 39.22 },
                 { name: "Internet Fiber Basic", value: 39.22 },
-                { name: "BASE Internet Unlimited +", value: 42.15 },
-                { name: "Internet Standard", value: 60.70 },
-                { name: "Fiber Internet Standard", value: 60.70 },
                 { name: "Internet Fiber Standard", value: 60.70 },
-                { name: "Internet Turbo", value: 79.38 },
                 { name: "Internet Fiber Turbo", value: 79.38 },
-                { name: "Internet Standard Pro", value: 84.98 },
                 { name: "Internet Fiber Standard Pro", value: 84.98 },
-                { name: "Business Fibernet", value: 84.98 },
-                { name: "Internet Fast Pro", value: 101.97 },
-                { name: "Internet Fiber Fast Pro", value: 101.97 },
-                { name: "Internet Turbo Pro", value: 111.13 },
-                { name: "Internet Fiber Turbo Pro", value: 111.13 },
-                { name: "Business Fibernet 300 plus", value: 132.04 }
+                { name: "Internet Fiber Turbo Pro", value: 111.13 }
             ],
             loose_value: [
                 { name: "Vaste Lijn / Telefonie", value: 1.65 },
-                { name: "ONE Telephony", value: 1.65 },
                 { name: "Streamz Basic", value: 3.71 },
-                { name: "Streamz/Legacy", value: 3.71 },
                 { name: "BASE TV Box", value: 4.13 },
-                { name: "Basisaanbod: TV-zenders", value: 4.13 },
-                { name: "Insurance", value: 4.95 },
-                { name: "BASE NL & FR TV Channels", value: 4.96 },
-                { name: "Streamz Premium", value: 5.78 },
-                { name: "YouTube Premium - Individual", value: 5.78 },
                 { name: "Disney+", value: 6.61 },
-                { name: "Safespot+", value: 6.61 },
                 { name: "Netflix Standard", value: 7.02 },
-                { name: "BASE TV App", value: 8.26 },
-                { name: "Tv-zenders basic", value: 8.26 },
                 { name: "Netflix Premium", value: 9.09 },
-                { name: "Safespot Pro", value: 9.26 },
-                { name: "DAZN Total by Play Sports", value: 10.33 },
-                { name: "Play Sports", value: 10.33 },
-                { name: "Play More", value: 11.15 },
-                { name: "TV-box + TV-zenders", value: 12.40 },
-                { name: "Telenet TV-box + TV-zender", value: 12.40 },
-                { name: "Play Sports + DAZN Total", value: 14.46 },
-                { name: "TV-box Pro + TV-zenders", value: 19.12 },
-                { name: "Telenet Tv-box pro + tv-zenders", value: 19.12 },
-                { name: "Telenet TV Iconic First", value: 19.83 }
+                { name: "Play Sports", value: 10.33 }
             ]
         };
 
@@ -325,13 +269,9 @@
 
         function loadSavedData() {
             try {
-                const savedSales = localStorage.getItem("dbmeir_sales");
-                if (savedSales) {
-                    salesData = JSON.parse(savedSales);
-                }
-            } catch (e) {
-                console.error("Localstorage error:", e);
-            }
+                const savedSales = localStorage.getItem("dbmeir_sales_v3");
+                if (savedSales) salesData = JSON.parse(savedSales);
+            } catch (e) { console.error(e); }
             team.forEach(m => {
                 if (!salesData[m.name]) {
                     salesData[m.name] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
@@ -341,10 +281,8 @@
 
         function saveData() {
             try {
-                localStorage.setItem("dbmeir_sales", JSON.stringify(salesData));
-            } catch (e) {
-                console.error("Localstorage save error:", e);
-            }
+                localStorage.setItem("dbmeir_sales_v3", JSON.stringify(salesData));
+            } catch (e) { console.error(e); }
         }
 
         function initData() {
@@ -380,9 +318,9 @@
             if (cat === "mobile" || cat === "internet" || cat === "loose_value") {
                 pGroup.classList.remove("hidden");
                 pSelect.innerHTML = "";
-                PRODUCTS[cat].forEach((p, idx) => {
+                PRODUCTS[cat].forEach((p) => {
                     let opt = document.createElement("option");
-                    opt.value = idx;
+                    opt.value = p.value; // Direct de prijs als getal
                     opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
                     pSelect.appendChild(opt);
                 });
@@ -399,9 +337,9 @@
         function populateOldProductDropdown(category) {
             const oldSelect = document.getElementById("oldProductSelect");
             oldSelect.innerHTML = "";
-            PRODUCTS[category].forEach((p, idx) => {
+            PRODUCTS[category].forEach((p) => {
                 let opt = document.createElement("option");
-                opt.value = idx;
+                opt.value = p.value; // Direct de prijs als getal
                 opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
                 oldSelect.appendChild(opt);
             });
@@ -415,70 +353,53 @@
         }
 
         function submitSale() {
-            try {
-                const seller = document.getElementById("sellerSelect").value;
-                const cat = document.getElementById("categorySelect").value;
-                if (!seller) return alert("Selecteer een verkoper!");
+            const seller = document.getElementById("sellerSelect").value;
+            const cat = document.getElementById("categorySelect").value;
+            if (!seller) return alert("Selecteer een verkoper!");
 
-                if (!salesData[seller]) {
-                    salesData[seller] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
-                }
-
-                if (cat === "mobile" || cat === "internet") {
-                    const pIdx = document.getElementById("productSelect").value;
-                    const newProd = PRODUCTS[cat][pIdx];
-                    const isMig = document.getElementById("isMigration").checked;
-
-                    if (!newProd) return alert("Selecteer een geldig nieuw product!");
-
-                    if (isMig) {
-                        const oldIdx = document.getElementById("oldProductSelect").value;
-                        const oldProd = PRODUCTS[cat][oldIdx];
-                        if (!oldProd) return alert("Selecteer een geldig oud product!");
-
-                        const newPrice = Number(newProd.value) || 0;
-                        const oldPrice = Number(oldProd.value) || 0;
-                        
-                        // Enkel het positieve prijsverschil
-                        const diff = newPrice - oldPrice;
-                        const addedValue = diff > 0 ? diff : 0;
-                        
-                        salesData[seller].value = (Number(salesData[seller].value) || 0) + addedValue;
-                        alert(`Migratie verwerkt voor ${seller}!\nToegevoegde Value: €${addedValue.toFixed(2)}`);
-                    } else {
-                        const price = Number(newProd.value) || 0;
-                        if (cat === "mobile") {
-                            salesData[seller].mobile = (Number(salesData[seller].mobile) || 0) + 1;
-                        } else {
-                            salesData[seller].internet = (Number(salesData[seller].internet) || 0) + 1;
-                        }
-                        salesData[seller].value = (Number(salesData[seller].value) || 0) + price;
-                        alert(`Nieuwe aansluiting opgeslagen voor ${seller}!`);
-                    }
-                } else if (cat === "loose_value") {
-                    const pIdx = document.getElementById("productSelect").value;
-                    const prod = PRODUCTS.loose_value[pIdx];
-                    const price = Number(prod.value) || 0;
-                    salesData[seller].value = (Number(salesData[seller].value) || 0) + price;
-                    alert(`Losse Value opgeslagen voor ${seller}!`);
-                } else if (cat === "hardware") {
-                    const gsm = Number(document.getElementById("gsmCount").value) || 0;
-                    const acc = Number(document.getElementById("accCount").value) || 0;
-                    salesData[seller].gsm = (Number(salesData[seller].gsm) || 0) + gsm;
-                    salesData[seller].acc = (Number(salesData[seller].acc) || 0) + acc;
-                    alert(`Hardware opgeslagen voor ${seller}!`);
-                }
-
-                saveData();
-                updateDashboard();
-
-                document.getElementById("isMigration").checked = false;
-                toggleMigrationInput();
-                document.getElementById("gsmCount").value = 0;
-                document.getElementById("accCount").value = 0;
-            } catch (err) {
-                alert("Er is een fout opgetreden: " + err.message);
+            if (!salesData[seller]) {
+                salesData[seller] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
             }
+
+            if (cat === "mobile" || cat === "internet") {
+                const newPrice = parseFloat(document.getElementById("productSelect").value) || 0;
+                const isMig = document.getElementById("isMigration").checked;
+
+                if (isMig) {
+                    const oldPrice = parseFloat(document.getElementById("oldProductSelect").value) || 0;
+                    
+                    // SIMPLICITEIT: Alleen de simpele som (Nieuw - Oud)
+                    const diff = newPrice - oldPrice;
+                    const addedValue = diff > 0 ? diff : 0; // Als het negatief is, telt hij 0 op
+
+                    salesData[seller].value += addedValue;
+                    alert(`Upgrade berekend voor ${seller}!\nNieuw (€${newPrice.toFixed(2)}) - Oud (€${oldPrice.toFixed(2)}) = +€${addedValue.toFixed(2)} toegevoegd aan Value.`);
+                } else {
+                    if (cat === "mobile") salesData[seller].mobile += 1;
+                    else salesData[seller].internet += 1;
+
+                    salesData[seller].value += newPrice;
+                    alert(`Nieuwe aansluiting opgeslagen voor ${seller}!`);
+                }
+            } else if (cat === "loose_value") {
+                const price = parseFloat(document.getElementById("productSelect").value) || 0;
+                salesData[seller].value += price;
+                alert(`Losse Value opgeslagen voor ${seller}!`);
+            } else if (cat === "hardware") {
+                const gsm = parseInt(document.getElementById("gsmCount").value, 10) || 0;
+                const acc = parseInt(document.getElementById("accCount").value, 10) || 0;
+                salesData[seller].gsm += gsm;
+                salesData[seller].acc += acc;
+                alert(`Hardware opgeslagen voor ${seller}!`);
+            }
+
+            saveData();
+            updateDashboard();
+
+            document.getElementById("isMigration").checked = false;
+            toggleMigrationInput();
+            document.getElementById("gsmCount").value = 0;
+            document.getElementById("accCount").value = 0;
         }
 
         function updateDashboard() {
