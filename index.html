@@ -94,7 +94,7 @@
 
             <div class="checkbox-group hidden" id="migrationGroup">
                 <input type="checkbox" id="isMigration" onchange="toggleMigrationInput()">
-                <label for="isMigration" style="margin:0;">Dit is een Migratie / Upgrade (geen nieuwe lijn)</label>
+                <label for="isMigration" style="margin:0;">Dit is een Migratie / Upgrade (geen nieuw abonnement)</label>
             </div>
 
             <div class="form-group hidden" id="oldProductGroup">
@@ -387,19 +387,20 @@
                     pSelect.appendChild(opt);
                 });
                 
-                if (cat === "mobile") {
+                // Migratieoptie inschakelen bij Mobiel EN Internet
+                if (cat === "mobile" || cat === "internet") {
                     mGroup.classList.remove("hidden");
-                    populateOldProductDropdown();
+                    populateOldProductDropdown(cat);
                 }
             } else if (cat === "hardware") {
                 hGroup.classList.remove("hidden");
             }
         }
 
-        function populateOldProductDropdown() {
+        function populateOldProductDropdown(category) {
             const oldSelect = document.getElementById("oldProductSelect");
             oldSelect.innerHTML = "";
-            PRODUCTS.mobile.forEach((p, idx) => {
+            PRODUCTS[category].forEach((p, idx) => {
                 let opt = document.createElement("option");
                 opt.value = idx;
                 opt.innerText = `${p.name} (€ ${p.value.toFixed(2)})`;
@@ -423,30 +424,29 @@
                 salesData[seller] = { internet: 0, mobile: 0, value: 0, gsm: 0, acc: 0 };
             }
 
-            if (cat === "mobile") {
+            if (cat === "mobile" || cat === "internet") {
                 const pIdx = parseInt(document.getElementById("productSelect").value) || 0;
-                const newProd = PRODUCTS.mobile[pIdx];
+                const newProd = PRODUCTS[cat][pIdx];
                 const isMig = document.getElementById("isMigration").checked;
 
                 if (isMig) {
                     const oldIdx = parseInt(document.getElementById("oldProductSelect").value) || 0;
-                    const oldProd = PRODUCTS.mobile[oldIdx];
+                    const oldProd = PRODUCTS[cat][oldIdx];
                     
-                    // Berekent uitsluitend het POSITIEVE verschil. Downgrades leveren 0 euro op.
+                    // Alleen het POSITIEVE verschil toevoegen aan Value
                     const difference = newProd.value - oldProd.value;
                     const addedValue = difference > 0 ? difference : 0;
                     
                     salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + addedValue;
-                    // Mobiel-teller blijft ongewijzigd op 0 bij een migratie
+                    // Mobiel/Internet tellers blijven ongewijzigd bij migraties
                 } else {
-                    salesData[seller].mobile = (parseInt(salesData[seller].mobile) || 0) + 1;
+                    if (cat === "mobile") {
+                        salesData[seller].mobile = (parseInt(salesData[seller].mobile) || 0) + 1;
+                    } else {
+                        salesData[seller].internet = (parseInt(salesData[seller].internet) || 0) + 1;
+                    }
                     salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + newProd.value;
                 }
-            } else if (cat === "internet") {
-                const pIdx = parseInt(document.getElementById("productSelect").value) || 0;
-                const prod = PRODUCTS.internet[pIdx];
-                salesData[seller].internet = (parseInt(salesData[seller].internet) || 0) + 1;
-                salesData[seller].value = (parseFloat(salesData[seller].value) || 0) + prod.value;
             } else if (cat === "loose_value") {
                 const pIdx = parseInt(document.getElementById("productSelect").value) || 0;
                 const prod = PRODUCTS.loose_value[pIdx];
