@@ -208,7 +208,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Gecodeerde configuratie om GitHub-waarschuwingen te omzeilen
         const p1 = "AIzaSyDGBtVV_vtb7NdX";
         const p2 = "x-Mx5qQaAv8tYxq27wM";
         const firebaseConfig = {
@@ -290,10 +289,11 @@
 
         onValue(ref(db, 'dbmeir_data'), (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                if (data.team) team = data.team;
-                if (data.sales) salesData = data.sales;
+            if (data && data.team) {
+                team = data.team;
+                salesData = data.sales || {};
             } else {
+                team = [...defaultTeam];
                 syncToCloud();
             }
             populateSellerDropdown();
@@ -549,7 +549,7 @@
             team.forEach(m => {
                 let div = document.createElement("div");
                 div.style.display = "flex";
-                div.style.justifyContent, "space-between";
+                div.style.justifyContent = "space-between";
                 div.style.alignItems = "center";
                 div.style.marginBottom = "6px";
                 div.style.background = "#0f172a";
