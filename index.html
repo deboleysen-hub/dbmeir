@@ -564,9 +564,30 @@
             ]
         };
 
+        // Winkel-targets per maand ingesteld voor de Meir
+        const SHOP_MONTHLY_TARGETS = {
+            internet: 211,
+            mobile: 392,
+            value: 24002,
+            gsm: 153,
+            acc: 99
+        };
+
         const MONTHLY_TARGETS = {
-            100: { internet: 15, mobile: 33, value: 1932, gsm: 12, acc: 7 },
-            80:  { internet: 12, mobile: 26, value: 1546, gsm: 10, acc: 6 }
+            100: { 
+                internet: SHOP_MONTHLY_TARGETS.internet / 12, 
+                mobile: SHOP_MONTHLY_TARGETS.mobile / 12, 
+                value: SHOP_MONTHLY_TARGETS.value / 12, 
+                gsm: SHOP_MONTHLY_TARGETS.gsm / 12, 
+                acc: SHOP_MONTHLY_TARGETS.acc / 12 
+            },
+            80:  { 
+                internet: (SHOP_MONTHLY_TARGETS.internet / 12) * 0.8, 
+                mobile: (SHOP_MONTHLY_TARGETS.mobile / 12) * 0.8, 
+                value: (SHOP_MONTHLY_TARGETS.value / 12) * 0.8, 
+                gsm: (SHOP_MONTHLY_TARGETS.gsm / 12) * 0.8, 
+                acc: (SHOP_MONTHLY_TARGETS.acc / 12) * 0.8 
+            }
         };
 
         let defaultTeam = [
@@ -742,7 +763,6 @@
 
         function updateDashboard() {
             let totalInt = 0, totalMob = 0, totalVal = 0, totalGsm = 0, totalAcc = 0;
-            let targetInt = 0, targetMob = 0, targetVal = 0, targetGsm = 0, targetAcc = 0;
 
             const tbody = document.getElementById("teamTableBody");
             if (!tbody) return;
@@ -764,13 +784,6 @@
                 totalGsm += curGsm;
                 totalAcc += curAcc;
 
-                const t = MONTHLY_TARGETS[m.regime] || MONTHLY_TARGETS[100];
-                targetInt += t.internet / WORK_DAYS_IN_MONTH;
-                targetMob += t.mobile / WORK_DAYS_IN_MONTH;
-                targetVal += t.value / WORK_DAYS_IN_MONTH;
-                targetGsm += t.gsm / WORK_DAYS_IN_MONTH;
-                targetAcc += t.acc / WORK_DAYS_IN_MONTH;
-
                 let tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${m.name} <span class="badge-regime">${m.regime}%</span></td>
@@ -783,25 +796,31 @@
                 tbody.appendChild(tr);
             });
 
+            const dailyTargetInt = SHOP_MONTHLY_TARGETS.internet / WORK_DAYS_IN_MONTH;
+            const dailyTargetMob = SHOP_MONTHLY_TARGETS.mobile / WORK_DAYS_IN_MONTH;
+            const dailyTargetVal = SHOP_MONTHLY_TARGETS.value / WORK_DAYS_IN_MONTH;
+            const dailyTargetGsm = SHOP_MONTHLY_TARGETS.gsm / WORK_DAYS_IN_MONTH;
+            const dailyTargetAcc = SHOP_MONTHLY_TARGETS.acc / WORK_DAYS_IN_MONTH;
+
             document.getElementById("total-internet").innerText = totalInt;
-            document.getElementById("target-internet").innerText = Math.round(targetInt);
-            updateKpiColor("kpi-box-internet", totalInt, targetInt);
+            document.getElementById("target-internet").innerText = Math.round(dailyTargetInt);
+            updateKpiColor("kpi-box-internet", totalInt, dailyTargetInt);
 
             document.getElementById("total-mobile").innerText = totalMob;
-            document.getElementById("target-mobile").innerText = Math.round(targetMob);
-            updateKpiColor("kpi-box-mobile", totalMob, targetMob);
+            document.getElementById("target-mobile").innerText = Math.round(dailyTargetMob);
+            updateKpiColor("kpi-box-mobile", totalMob, dailyTargetMob);
 
             document.getElementById("total-value").innerText = `€ ${totalVal.toFixed(2)}`;
-            document.getElementById("target-value").innerText = `€ ${Math.round(targetVal)}`;
-            updateKpiColor("kpi-box-value", totalVal, targetVal);
+            document.getElementById("target-value").innerText = `€ ${Math.round(dailyTargetVal)}`;
+            updateKpiColor("kpi-box-value", totalVal, dailyTargetVal);
 
             document.getElementById("total-gsm").innerText = totalGsm;
-            document.getElementById("target-gsm").innerText = Math.round(targetGsm);
-            updateKpiColor("kpi-box-gsm", totalGsm, targetGsm);
+            document.getElementById("target-gsm").innerText = Math.round(dailyTargetGsm);
+            updateKpiColor("kpi-box-gsm", totalGsm, dailyTargetGsm);
 
             document.getElementById("total-acc").innerText = totalAcc;
-            document.getElementById("target-acc").innerText = Math.round(targetAcc);
-            updateKpiColor("kpi-box-acc", totalAcc, targetAcc);
+            document.getElementById("target-acc").innerText = Math.round(dailyTargetAcc);
+            updateKpiColor("kpi-box-acc", totalAcc, dailyTargetAcc);
         }
 
         function updateKpiColor(boxId, current, target) {
