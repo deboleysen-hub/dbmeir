@@ -361,16 +361,15 @@
             ]
         };
 
-        // Winkel-targets per maand (Telenet + Base opgeteld voor de Meir)
+        // Gecorrigeerde maandtargets voor de Meir
         const SHOP_MONTHLY_TARGETS = {
-            internet: 192, // 138 Telenet + 54 Base
-            mobile: 457,  // 315 Telenet + 142 Base
+            internet: 192,
+            mobile: 457,
             value: 23730,
-            gsm: 153,
-            acc: 99
+            gsm: 209,
+            acc: 136
         };
 
-        // Standaard team van de Meir (Gwendoline vervangt Sebastian)
         let defaultTeam = [
             { id: 1, name: "Tom", regime: 100 },
             { id: 2, name: "Mohit", regime: 100 },
@@ -683,7 +682,9 @@
             });
         }
 
-        window.onload = initData;
+        window.onload = function() {
+            initData();
+        };
     </script>
 </body>
 </html>
